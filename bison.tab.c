@@ -69,9 +69,16 @@
 /* Line 189 of yacc.c  */
 #line 1 "bison.y"
 
+#define YYDEBUG 1
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+// #include "attr.h"
+
+struct Attr{
+    char* str;
+    int num;
+} ;
 
 // Function to reverse a number
 int reverse_number(int num) {
@@ -87,25 +94,47 @@ int reverse(int num){
     int reversed = num;
     if (num % 10 != 0) {
         reversed = reverse_number(num);
-        printf("Reversed NUMBER: %d -> %d\n", num, reversed);
+        // printf("Reversed NUMBER: %d -> %d\n", num, reversed);
         return reversed;
     } else {
-        printf("reserved number %d -> %d \n",num,reversed);
+        // printf("reversed number %d -> %d \n",num,reversed);
         return reversed;
     }
 }
 
+int temp_counter = 1;
+char* new_temp() {
+    char* temp = (char*)malloc(10);
+    sprintf(temp, "t%d", temp_counter++);
+    return temp;
+}
+
+char* int_to_string(int num) {
+    // Allocate enough memory to store the string representation
+    // Maximum digits for an int + 1 for the sign + 1 for '\0'
+    char* str = (char*)malloc(12 * sizeof(char));  
+    if (str == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+
+    // Convert the integer to a string
+    sprintf(str, "%d", num);
+
+    return str; // Return the allocated string
+}
+
 int yylex();
 int yyerror(const char *s);
-extern int t = 1;
+
 
 
 /* Line 189 of yacc.c  */
-#line 105 "bison.tab.c"
+#line 134 "bison.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 
 /* Enabling verbose error messages.  */
@@ -148,15 +177,16 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 33 "bison.y"
+#line 64 "bison.y"
 
     int num;
     char* str;
+    struct Attr* attr;
 
 
 
 /* Line 214 of yacc.c  */
-#line 160 "bison.tab.c"
+#line 190 "bison.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -168,7 +198,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 172 "bison.tab.c"
+#line 202 "bison.tab.c"
 
 #ifdef short
 # undef short
@@ -454,8 +484,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    56,    56,    63,    68,    73,    80,    85,    90,    96,
-      99
+       0,    88,    88,    99,   109,   119,   127,   138,   147,   155,
+     159
 };
 #endif
 
@@ -1372,10 +1402,14 @@ yyreduce:
         case 2:
 
 /* Line 1464 of yacc.c  */
-#line 56 "bison.y"
+#line 88 "bison.y"
     {
-    (yyval.num) = (yyvsp[(3) - (4)].num);
-    printf("final result %s = %d \n", (yyvsp[(1) - (4)].str),(yyval.num));
+    // $$ = malloc(sizeof(struct Attr));
+    // $$->str = $3->str;
+    // $$->num = $3->num;
+    printf("%s = %s;\n", (yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].attr)->str); // Assign the last temp variable to the ID
+    // printf("mmd");
+    printf("final value %d : ",(yyvsp[(3) - (4)].attr)->num);
     return 0;
 ;}
     break;
@@ -1383,88 +1417,119 @@ yyreduce:
   case 3:
 
 /* Line 1464 of yacc.c  */
-#line 63 "bison.y"
+#line 99 "bison.y"
     {
-        (yyval.num) = reverse((yyvsp[(1) - (3)].num) * (yyvsp[(3) - (3)].num));
+        // $$ = reverse($1 * $3);
         // printf("Computed %d * %d = %d \n",$1,$3,$$);
-        printf("t%d = %d * %d \n",t++,(yyvsp[(1) - (3)].num),(yyvsp[(3) - (3)].num));
+        char* temp = new_temp();
+        printf("%s = %s * %s;\n", temp, (yyvsp[(1) - (3)].attr)->str, (yyvsp[(3) - (3)].attr)->str); // TAC for multiplication
+        (yyval.attr) = malloc(sizeof(struct Attr));
+        (yyval.attr)->str = temp;
+        (yyval.attr)->num = reverse((yyvsp[(1) - (3)].attr)->num * (yyvsp[(3) - (3)].attr)->num);
+
     ;}
     break;
 
   case 4:
 
 /* Line 1464 of yacc.c  */
-#line 68 "bison.y"
+#line 109 "bison.y"
     {
-        (yyval.num) = reverse((yyvsp[(1) - (3)].num) / (yyvsp[(3) - (3)].num));
+        // $$ = reverse($1 / $3);
         // printf("Computed %d / %d = %d \n",$1,$3,$$);
-        printf("t%d = %d / %d \n",t++,(yyvsp[(1) - (3)].num),(yyvsp[(3) - (3)].num));
+        char* temp = new_temp();
+        printf("%s = %s / %s;\n", temp, (yyvsp[(1) - (3)].attr)->str, (yyvsp[(3) - (3)].attr)->str); // TAC for division
+        (yyval.attr) = malloc(sizeof(struct Attr));
+        (yyval.attr)->str = temp;
+        (yyval.attr)->num = reverse((yyvsp[(1) - (3)].attr)->num / (yyvsp[(3) - (3)].attr)->num);
+
     ;}
     break;
 
   case 5:
 
 /* Line 1464 of yacc.c  */
-#line 73 "bison.y"
+#line 119 "bison.y"
     {
-        (yyval.num) = (yyvsp[(1) - (1)].num);
-        printf("Computed %d \n",(yyvsp[(1) - (1)].num));
+        (yyval.attr) = malloc(sizeof(struct Attr));
+        (yyval.attr) = (yyvsp[(1) - (1)].attr);
+        // printf("Computed %d \n",$1);
     ;}
     break;
 
   case 6:
 
 /* Line 1464 of yacc.c  */
-#line 80 "bison.y"
+#line 127 "bison.y"
     {
-        (yyval.num) = reverse((yyvsp[(1) - (3)].num) + (yyvsp[(3) - (3)].num)); // Right associative
-        printf("t%d = %d + %d \n",t++,(yyvsp[(1) - (3)].num),(yyvsp[(3) - (3)].num));
+        // $$ = reverse($1 + $3); // Right associative
+        // // printf("t%d = %d + %d \n",t++,$1,$3);
         // printf("Computed %d + %d = %d \n",$1,$3,$$);
+        char* temp = new_temp();
+        printf("%s = %s + %s;\n", temp, (yyvsp[(1) - (3)].attr)->str, (yyvsp[(3) - (3)].attr)->str); // TAC for addition
+        (yyval.attr) = malloc(sizeof(struct Attr));
+        (yyval.attr)->str = temp;
+        (yyval.attr)->num = reverse((yyvsp[(1) - (3)].attr)->num + (yyvsp[(3) - (3)].attr)->num);
+
     ;}
     break;
 
   case 7:
 
 /* Line 1464 of yacc.c  */
-#line 85 "bison.y"
+#line 138 "bison.y"
     {
-        (yyval.num) = reverse((yyvsp[(1) - (3)].num) - (yyvsp[(3) - (3)].num)); // Right associative
-        printf("t%d = %d - %d \n",t++,(yyvsp[(1) - (3)].num),(yyvsp[(3) - (3)].num));
+        char* temp = new_temp();
+        printf("%s = %s - %s;\n", temp, (yyvsp[(1) - (3)].attr)->str, (yyvsp[(3) - (3)].attr)->str); // TAC for subtraction
         // printf("Computed %d - %d = %d \n",$1,$3,$$);
+        (yyval.attr) = malloc(sizeof(struct Attr));
+        (yyval.attr)->str = temp;
+        (yyval.attr)->num = reverse((yyvsp[(1) - (3)].attr)->num - (yyvsp[(3) - (3)].attr)->num);
+
     ;}
     break;
 
   case 8:
 
 /* Line 1464 of yacc.c  */
-#line 90 "bison.y"
+#line 147 "bison.y"
     {
-        (yyval.num) = (yyvsp[(1) - (1)].num);
+        // printf("Computed %d \n",$1->num);
+        (yyval.attr) = malloc(sizeof(struct Attr));
+        (yyval.attr) = (yyvsp[(1) - (1)].attr);
     ;}
     break;
 
   case 9:
 
 /* Line 1464 of yacc.c  */
-#line 96 "bison.y"
+#line 155 "bison.y"
     {
-        (yyval.num) = (yyvsp[(2) - (3)].num);
+        (yyval.attr) = malloc(sizeof(struct Attr));
+        (yyval.attr) = (yyvsp[(2) - (3)].attr);
     ;}
     break;
 
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 99 "bison.y"
+#line 159 "bison.y"
     {
-        (yyval.num) = reverse((yyvsp[(1) - (1)].num));
+        // char* temp = new_temp();
+        int reversed = reverse((yyvsp[(1) - (1)].num));
+        // $$ = reverse($1);
+        // $$->str = int_to_string(reversed);
+        (yyval.attr) = malloc(sizeof(struct Attr));
+        (yyval.attr)->str = int_to_string(reversed);
+        (yyval.attr)->num = reversed;
+        // printf("Computed %s , %d \n",$$->str,$$->num);
     ;}
     break;
 
 
 
 /* Line 1464 of yacc.c  */
-#line 1468 "bison.tab.c"
+#line 1533 "bison.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1676,10 +1741,12 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 104 "bison.y"
+#line 171 "bison.y"
 
 
 int main() {
+    // yydebug = 1; // Enable debug mode
+
     printf("Enter an expression: ");
     yyparse();
     return 0;

@@ -58,15 +58,16 @@ typedef union YYSTYPE
 {
 
 /* Line 1685 of yacc.c  */
-#line 33 "bison.y"
+#line 64 "bison.y"
 
     int num;
     char* str;
+    struct Attr* attr;
 
 
 
 /* Line 1685 of yacc.c  */
-#line 70 "bison.tab.h"
+#line 71 "bison.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
